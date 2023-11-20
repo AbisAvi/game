@@ -16,7 +16,7 @@ class Player(Sprite):
             image.load("assets/spman.png")
         ]
         self.images = list(map(
-            lambda x: transform.scale(x, (64, 64)),
+            lambda x: transform.scale(x, (64, 32)),
             self.images
         ))
 
@@ -24,7 +24,7 @@ class Player(Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (config.WIDTH / 2, config.HEIGHT / 2)
 
-        self.health = 5
+        self.health = 1
         self.points = 0
         self.resist = 5
 
@@ -38,6 +38,7 @@ class Player(Sprite):
         if key[pygame.K_SPACE]:
             self.speed_y = -5
         if key[pygame.K_LSHIFT]:
+            self.speed_y = 1
             self.rect.height = 16
         else:
             self.rect.height = 32
@@ -69,33 +70,21 @@ class Player(Sprite):
 
 
 class Mob(Sprite):
-    def __init__(self):
+    def __init__(self, y):
         Sprite.__init__(self)
-        self.image = Surface((20, 20))
-        self.color = config.COLORS["bochca.png"]
-        self.image.fill(self.color)
+        self.image =  image.load("assets/bochka.png")
         self.rect = self.image.get_rect()
         self.rect.center = (
-            random.randint(self.rect.width // 2, config.WIDTH - self.rect.width // 2),
-            random.randint(self.rect.height // 2, config.HEIGHT - self.rect.height // 2)
+            config.WIDTH - 32,
+            y
         )
 
-        self.speed_x = 5
+        self.speed_x = -3
 
     def update(self):
         self.rect.x += self.speed_x
         if self.rect.x > config.WIDTH - self.rect.width or self.rect.x < 0:
-            self.rect.x -= self.speed_x
-            # self.speed_x *= 0.95
-
-    def compute_move(self, player: Player):
-        x_m = self.rect.center
-        x_p = player.rect.center
-
-        vector_right = utils.get_lenght(x_p, x_m + self.speed_x)
-        vector_left = utils.get_lenght(x_p, x_m - self.speed_x)
-
-        min_vector = min(vector_left, vector_right)
+            self.kill()
 
     def reverse_speed_y(self):
         self.speed_y = -self.speed_y

@@ -24,7 +24,21 @@ player = pygame.sprite.Group()
 player.add(Player())
 
 clock = pygame.time.Clock()
+mobs = pygame.sprite.Group()
+
+player_entity = Player()
+player.add(player_entity)
+
 running = True
+
+def add_mobs():
+    y1 = 200
+    y2 = 150 + y1
+
+    mobs.add(Mob(y1))
+    mobs.add(Mob(y2))
+
+add_mobs()
 
 while running:
     clock.tick(config.FRAMERATE)
@@ -33,10 +47,25 @@ while running:
             running = False
 
     player.update()
+    mobs.update()
 
-    # screen.fill(config.COLORS["Red"])
-    screen.blit(background, (0, 0))
+    if player_entity.health == 0:
+        running = False
+
+    x = mobs.sprites()[0].rect.x
+    if x != config.WIDTH and len(mobs) == 2 and x < 250:
+        add_mobs()
+
+
+    hits = pygame.sprite.groupcollide(player, mobs, False, True)
+    if hits:
+        player_entity.health -= 1
+
+    screen.fill((0, 0, 0))
     player.draw(screen)
+    mobs.draw(screen)
+    text = font.render(f"Hp:{player_entity.health}", False, (255, 255, 255))
+    screen.blit(text, (0, 0))
     pygame.display.flip()
 
 pygame.quit()
