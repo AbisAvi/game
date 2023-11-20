@@ -5,6 +5,9 @@ from Sprites.Sprites import Player, Mob
 from Sprites.MapSprite import Ground
 import random
 
+# git config --global user.email "daniilvolodin4@gmail.com"
+# git config --global user.name AbisAvi
+
 pygame.init()
 pygame.font.init()
 
