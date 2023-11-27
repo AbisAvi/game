@@ -1,6 +1,5 @@
 import pygame
 import config
-import utils
 from Sprites.Sprites import Player, Mob
 from Sprites.MapSprite import Ground
 import random
@@ -14,7 +13,7 @@ pygame.font.init()
 background = pygame.image.load("assets/zadnic.png")
 background = pygame.transform.scale(background, (config.WIDTH, config.HEIGHT))
 
-font = pygame.font.SysFont(pygame.font.get_default_font(), 20)
+font = pygame.font.SysFont(pygame.font.get_default_font(), 40)
 
 screen = pygame.display.set_mode(
     (config.WIDTH, config.HEIGHT)
@@ -30,10 +29,11 @@ player_entity = Player()
 player.add(player_entity)
 
 running = True
+score = 0
 
 def add_mobs():
-    y1 = 200
-    y2 = 150 + y1
+    y1 = random.randint(-30, 30)
+    y2 = 500 - y1
 
     mobs.add(Mob(y1))
     mobs.add(Mob(y2))
@@ -48,14 +48,13 @@ while running:
 
     player.update()
     mobs.update()
-
     if player_entity.health == 0:
         running = False
 
     x = mobs.sprites()[0].rect.x
-    if x != config.WIDTH and len(mobs) == 2 and x < 250:
+    if x != config.WIDTH and len(mobs) == 2 and x < 125:
         add_mobs()
-
+        score += 1
 
     hits = pygame.sprite.groupcollide(player, mobs, False, True)
     if hits:
@@ -64,8 +63,8 @@ while running:
     screen.fill((0, 0, 0))
     player.draw(screen)
     mobs.draw(screen)
-    text = font.render(f"Hp:{player_entity.health}", False, (255, 255, 255))
-    screen.blit(text, (0, 0))
+    bound_rendered = font.render(f"Score: {score}", True, (0, 255, 255))
+    screen.blit(bound_rendered, (0, 0))
     pygame.display.flip()
 
 pygame.quit()

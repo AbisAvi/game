@@ -3,7 +3,6 @@ from pygame.sprite import Sprite
 from pygame import Surface, image, transform, rect
 import config
 import random
-import utils
 
 
 class Player(Sprite):
@@ -29,17 +28,21 @@ class Player(Sprite):
         self.resist = 5
 
         self.speed_y = 3
+        self.cooldown = 13
 
     def update(self):
         self.speed_y += 1
         self.update_image_move(0)
+        if self.cooldown < 13:
+            self.cooldown += 1
 
         key = pygame.key.get_pressed()
-        if key[pygame.K_SPACE]:
-            self.speed_y = -5
+        if key[pygame.K_SPACE] and self.cooldown == 13:
+            self.speed_y = -10
+            self.cooldown = 0
         if key[pygame.K_LSHIFT]:
             self.speed_y = 1
-            self.rect.height = 16
+            self.rect.height = 32
         else:
             self.rect.height = 32
 
@@ -54,8 +57,6 @@ class Player(Sprite):
             self.image = self.images[self.index]
 
     def update_image_move(self, move: int):
-        angle = 45 * move
-        # image = transform.rotate(self.images[self.index], angle)
         image = self.images[self.index]
         if move < 0:
             image = transform.flip(image, 1, 0)
@@ -72,14 +73,15 @@ class Player(Sprite):
 class Mob(Sprite):
     def __init__(self, y):
         Sprite.__init__(self)
-        self.image =  image.load("assets/bochka.png")
+        self.image = Surface((32, 300))
+        self.image.fill((0, 255, 0))
         self.rect = self.image.get_rect()
         self.rect.center = (
             config.WIDTH - 32,
             y
         )
 
-        self.speed_x = -3
+        self.speed_x = -2
 
     def update(self):
         self.rect.x += self.speed_x
