@@ -11,8 +11,7 @@ class Player(Sprite):
         self.index = 0
 
         self.images = [
-            image.load("assets/spman.png"),
-            image.load("assets/spman.png")
+            image.load("assets/fb.png")
         ]
         self.images = list(map(
             lambda x: transform.scale(x, (64, 32)),
@@ -74,7 +73,7 @@ class Mob(Sprite):
     def __init__(self, y):
         Sprite.__init__(self)
         self.image = Surface((32, 300))
-        self.image.fill((0, 255, 0))
+        self.image.fill((80, 80, 80))
         self.rect = self.image.get_rect()
         self.rect.center = (
             config.WIDTH - 32,
