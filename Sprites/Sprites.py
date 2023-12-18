@@ -72,16 +72,19 @@ class Player(Sprite):
 class Mob(Sprite):
     def __init__(self, y):
         Sprite.__init__(self)
-        self.image = Surface((32, 300))
-        self.image.fill((80, 80, 80))
+        self.images = [
+            image.load("assets/mysor.png")
+        ]
+        self.image = self.images[0]
+        self.image = pygame.transform.scale(self.image, (32, 300  ))
+
         self.rect = self.image.get_rect()
+        self.speed_x = -3
+
         self.rect.center = (
             config.WIDTH - 32,
             y
         )
-
-        self.speed_x = -2
-
     def update(self):
         self.rect.x += self.speed_x
         if self.rect.x > config.WIDTH - self.rect.width or self.rect.x < 0:

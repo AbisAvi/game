@@ -33,7 +33,7 @@ score = 0
 
 def add_mobs():
     y1 = random.randint(-30, 30)
-    y2 = 500 - y1
+    y2 = 450 + y1
 
     mobs.add(Mob(y1))
     mobs.add(Mob(y2))
