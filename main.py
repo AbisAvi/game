@@ -31,12 +31,11 @@ player.add(player_entity)
 running = True
 score = 0
 
-def add_mobs():
-    y1 = random.randint(-30, 30)
-    y2 = 450 + y1
 
+def add_mobs():
+    y1 = random.randint(10, config.HEIGHT - 10)
     mobs.add(Mob(y1))
-    mobs.add(Mob(y2))
+
 
 add_mobs()
 
@@ -52,7 +51,7 @@ while running:
         running = False
 
     x = mobs.sprites()[0].rect.x
-    if x != config.WIDTH and len(mobs) == 2 and x < 125:
+    if x != config.WIDTH and len(mobs) == 1 and x < 125:
         add_mobs()
         score += 1
 
