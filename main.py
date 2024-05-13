@@ -21,9 +21,8 @@ screen = pygame.display.set_mode(
 
 player = pygame.sprite.Group()
 player.add(Player())
-
-clock = pygame.time.Clock()
 mobs = pygame.sprite.Group()
+clock = pygame.time.Clock()
 
 player_entity = Player()
 player.add(player_entity)
@@ -53,15 +52,26 @@ while running:
     x = mobs.sprites()[0].rect.x
     if x != config.WIDTH and len(mobs) == 1 and x < 125:
         add_mobs()
-        score += 1
-
     hits = pygame.sprite.groupcollide(player, mobs, False, True)
     if hits:
         player_entity.health -= 1
 
+    hits = pygame.sprite.groupcollide(player_entity.bullets, mobs, True, False)
+    if hits:
+        keys = list(hits.keys())
+        mob = hits.get(keys[0], 0)
+        if mob == 0:
+            pass
+        else:
+            mob[0].kill()
+            Mob.mobs_killed += 1
+            add_mobs()
+            score += 1
+
     screen.fill((0, 0, 0))
     player.draw(screen)
     mobs.draw(screen)
+    player_entity.bullets.draw(screen)
     bound_rendered = font.render(f"Score: {score}", True, (0, 255, 255))
     screen.blit(bound_rendered, (0, 0))
     pygame.display.flip()

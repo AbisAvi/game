@@ -11,27 +11,38 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load("assets/fb.png")
         self.rect = self.image.get_rect()
 
+        self.bullets = pygame.sprite.Group()
+
         self.money = 0
         self.speed_x = 0
         self.speed_y = 0
-        self.health = 10
+        self.health = 1
         self.points = 0
         self.resist = 5
 
+        self.ticks = 0
+        self.fire_tick = 0
 
     def update(self, *args, **kwargs):
+        self.ticks += 1
+        self.bullets.update()
         x, y = self.rect.topleft
         width, height = self.rect.size
 
         keys = pygame.key.get_pressed()
+
         if keys[pygame.K_a]:  # -x
-            self.speed_x -= 6
+            self.speed_x -= 7
         elif keys[pygame.K_d]:  # x
-            self.speed_x += 6
+            self.speed_x += 7
         elif keys[pygame.K_w]:  # y
-            self.speed_y -= 6
+            self.speed_y -= 7
         elif keys[pygame.K_s]:
-            self.speed_y += 6
+            self.speed_y += 7
+        elif keys[pygame.K_r] and self.ticks - self.fire_tick > config.FRAMERATE * 1:
+            bullet = Bullet(self)
+            self.bullets.add(bullet)
+            self.fire_tick = self.ticks
 
         self.rect.x += self.speed_x
         self.rect.y += self.speed_y
@@ -49,70 +60,29 @@ class Player(pygame.sprite.Sprite):
             self.rect.y = config.HEIGHT - height
 
 
-class Player1(Sprite):
-    def __init__(self):
+class Bullet(Sprite):
+    def __init__(self, player: Player):
         Sprite.__init__(self)
-        self.index = 0
-
         self.images = [
-            image.load("assets/fb.png")
+            image.load("assets/mysor.png")
         ]
-        self.images = list(map(
-            lambda x: transform.scale(x, (64, 32)),
-            self.images
-        ))
+        self.image = self.images[0]
 
-        self.image = self.images[self.index]
         self.rect = self.image.get_rect()
-        self.rect.center = (config.WIDTH / 2, config.HEIGHT / 2)
+        self.speed_x = 5
 
-        self.health = 10
-        self.points = 0
-        self.resist = 5
-
-        self.speed_y = 3
-        self.cooldown = 13
+        self.rect.center = player.rect.center
 
     def update(self):
-        self.speed_y += 1
-        self.update_image_move(0)
-        if self.cooldown < 13:
-            self.cooldown += 1
-
-        key = pygame.key.get_pressed()
-        if key[pygame.K_SPACE] and self.cooldown == 13:
-            self.speed_y = -10
-            self.cooldown = 0
-        if key[pygame.K_LSHIFT]:
-            self.speed_y = 1
-            self.rect.height = 32
-        else:
-            self.rect.height = 32
-
-        self.rect.y += self.speed_y
-        if self.rect.y > config.HEIGHT - self.rect.height or self.rect.y < 0:
-            self.rect.y -= self.speed_y
-            # self.speed_y *= 0.95
-
-    def update_image(self, index):
-        if self.index != index:
-            self.index = index
-            self.image = self.images[self.index]
-
-    def update_image_move(self, move: int):
-        image = self.images[self.index]
-        if move < 0:
-            image = transform.flip(image, 1, 0)
-        self.image = image
-
-    def reverse_speed_y(self):
-        self.speed_y = -self.speed_y
-
-    def get_knockback(self):
-        self.rect.y += -self.speed_y
+        self.rect.x += self.speed_x
+        if self.rect.x > config.WIDTH - self.rect.width:
+            self.kill()
 
 
 class Mob(Sprite):
+    mob_speed = -10
+    mobs_killed = 0
+
     def __init__(self, y):
         Sprite.__init__(self)
         self.images = [
@@ -122,7 +92,7 @@ class Mob(Sprite):
         self.image = pygame.transform.scale(self.image, (64, 64))
 
         self.rect = self.image.get_rect()
-        self.speed_x = -6
+        self.speed_x = Mob.mob_speed
 
         self.rect.center = (
             config.WIDTH - 32,
@@ -130,6 +100,8 @@ class Mob(Sprite):
         )
 
     def update(self):
+        self.speed_x = Mob.mob_speed + Mob.mobs_killed // -5
+
         self.rect.x += self.speed_x
         if self.rect.x > config.WIDTH - self.rect.width or self.rect.x < 0:
             self.kill()
