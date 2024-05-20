@@ -8,12 +8,11 @@ import random
 class Player(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
-        self.image = pygame.image.load("assets/fb.png")
+        self.image = pygame.image.load("assets/raceta.png")
         self.rect = self.image.get_rect()
-
+        self.image = pygame.transform.scale(self.image, (64, 64))
         self.bullets = pygame.sprite.Group()
 
-        self.money = 0
         self.speed_x = 0
         self.speed_y = 0
         self.health = 1
@@ -64,7 +63,7 @@ class Bullet(Sprite):
     def __init__(self, player: Player):
         Sprite.__init__(self)
         self.images = [
-            image.load("assets/mysor.png")
+            image.load("assets/pyla.png")
         ]
         self.image = self.images[0]
 
@@ -100,7 +99,7 @@ class Mob(Sprite):
         )
 
     def update(self):
-        self.speed_x = Mob.mob_speed + Mob.mobs_killed // -5
+        self.speed_x = Mob.mob_speed + Mob.mobs_killed // -1
 
         self.rect.x += self.speed_x
         if self.rect.x > config.WIDTH - self.rect.width or self.rect.x < 0:

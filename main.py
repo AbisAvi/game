@@ -49,9 +49,14 @@ while running:
     if player_entity.health == 0:
         running = False
 
-    x = mobs.sprites()[0].rect.x
-    if x != config.WIDTH and len(mobs) == 1 and x < 125:
+    if len(mobs.sprites()) > 0:
+        x = mobs.sprites()[0].rect.x
+        if x != config.WIDTH and len(mobs) == 0 and x < 125:
+            add_mobs()
+
+    if len(mobs.sprites()) == 0:
         add_mobs()
+
     hits = pygame.sprite.groupcollide(player, mobs, False, True)
     if hits:
         player_entity.health -= 1

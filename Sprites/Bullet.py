@@ -9,7 +9,7 @@ class Mob(Sprite):
     def __init__(self, player: Sprites.Player):
         Sprite.__init__(self)
         self.images = [
-            image.load("assets/mysor.png")
+            image.load("assets/pyla.png")
         ]
         self.image = self.images[0]
 
